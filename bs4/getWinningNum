@@ -1,0 +1,32 @@
+from bs4 import BeautifulSoup
+import requests
+
+# headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"}
+
+sum_list = []
+url0 = 'http://kaijiang.zhcw.com/zhcw/html/ssq/list_'
+url1 = '.html'
+for i in range(1, 3, 1):
+    url = url0 + str(i) + url1
+
+    dom = requests.get(url)
+    dom.encoding = "utf-8"
+    soup = BeautifulSoup(dom.text, 'html.parser')
+    aa = soup.find_all('tr')
+
+    for i in aa:
+        if i.find('em'):
+            tem_list = []
+            tagTd = i.find_all('td')
+            tem_list.append(tagTd[0].get_text())
+            tem_list.append(tagTd[1].get_text())
+            for j in range(7):
+                tem_list.append(tagTd[2].find_all('em')[j].get_text())
+            tem_list.append(tagTd[3].get_text())
+            tem_list.append(tagTd[4].find('strong').get_text())
+            tem_list.append(tagTd[5].get_text())
+            sum_list.append(tem_list)
+
+
+print(sum_list)
+print(len(sum_list))
