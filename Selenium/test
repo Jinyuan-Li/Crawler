@@ -1,0 +1,108 @@
+from selenium import webdriver
+import time
+from selenium.webdriver.common.action_chains import ActionChains
+
+driver = webdriver.Chrome(executable_path="/chromedriver")
+
+# def find_element():
+    # driver.find_element_by_id("xxx")
+    # driver.find_element_by_name("xxx")
+    # driver.find_element_by_class_name("xxx")
+    # driver.find_element_by_tag_name("xxx")
+    #
+    # # < a id = "setf" href = "//www.baidu.com/cache/sethelp/help.html" onmousedown = "return ns_c({'fm':'behs','tab':'favorites','pos':0})" target = "_blank" > 把百度设为主页 < / a >
+    # driver.find_element_by_link_text("把百度设为主页")
+    # driver.find_element_by_partial_link_text()link_text("把百度")
+    #
+    # # < input id = "kw" name = "wd" class ="s_ipt" value="" maxlength="255" autocomplete="off" >
+    # driver.find_element_by_xpath('/html/body/div/div/....') #絕對路徑
+    # driver.find_element_by_xpath('//*[@id="kw"]') # 元素屬性 id可改為name、class或type等其他屬性值
+    # driver.find_element_by_xpath('//input[@id="kw"]')
+    # driver.find_element_by_xpath('//input[@id="form"]/span/input/...') #層級與屬性結合
+    # driver.find_element_by_xpath('//input[@id="kw" and @name="kw"]') #使用邏輯運算子
+    #
+    # driver.find_element_by_css_selector('.xxxx') #class
+    # driver.find_element_by_css_selector('#xxxx') #id
+    # driver.find_element_by_css_selector('xxxxx') #tag
+    # driver.find_element_by_css_selector('span>input') #父子關係
+    # driver.find_element_by_css_selector('[name="xxxxx"]') #屬性
+    # driver.find_element_by_css_selector('form#form>span>input#kw') #組合定位
+
+def login():
+    driver.get('https://nccu.edu.tw/indexs.html')
+    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[2]/input').clear()
+    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[2]/input').send_keys('99752018')
+    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[3]/input').clear()
+    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[3]/input').send_keys('nu527705')
+    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[4]/input').click()
+    driver.implicitly_wait(5)
+    driver.switch_to.frame('m2k')
+    text = driver.find_element_by_xpath('//*[@id="smOLIF1"]/div/div[2]/nobr/div/nobr[5]/a').text
+    print(text)
+# login()
+
+def gettext_perform():
+    driver.get('https://www.baidu.com/')
+    text = driver.find_element_by_xpath('//*[@id="qrcode"]/div/div[2]/p[2]').text
+    print(text)
+    right_click = driver.find_element_by_xpath('//*[@id="u1"]/a[1]')
+    ActionChains(driver).context_click(right_click).perform()
+    time.sleep(5)
+    above = driver.find_element_by_xpath('//*[@id="u1"]/a[8]')
+    ActionChains(driver).move_to_element(above).perform()
+    time.sleep(5)
+# gettext_perform()
+
+def switch_window():
+    driver.get('https://www.baidu.com/')
+    old_windows = driver.current_window_handle
+    driver.find_element_by_link_text('登录').click()
+    driver.implicitly_wait(5)
+    driver.find_element_by_link_text('立即注册').click()
+    time.sleep(5)
+    all_windows = driver.window_handles
+
+    driver.switch_to.window(all_windows[1])
+    print('aa')
+    driver.find_element_by_name('userName').send_keys('11223344')
+    driver.find_element_by_name('phone').send_keys('33445566')
+
+    driver.switch_to.window(old_windows)
+    print('bb')
+    text = driver.find_element_by_xpath('//*[@id="qrcode"]/div/div[2]/p[2]').text
+    print(text)
+# switch_window()
+
+def upload():
+    driver.get('https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=13&ct=1563444867&rver=7.1.6819.0&wp=MBI_SSL_SHARED&wreply=https:%2F%2Fonedrive.live.com%2F%3Fid%3Droot%26cid%3D0BDE59C94E9497FB%26mkt%3Dzh-TW&lc=1028&id=250206&cbcxt=sky&mkt=zh-TW&lw=1&fl=easi2')
+    driver.find_element_by_xpath('//*[@id="i0116"]').clear()
+    driver.find_element_by_xpath('//*[@id="i0116"]').send_keys('kirameki@livemail.tw')
+    driver.find_element_by_id('idSIButton9').click()
+    time.sleep(5)
+    driver.find_element_by_xpath('//*[@id="i0118"]').clear()
+    driver.find_element_by_xpath('//*[@id="i0118"]').send_keys('oe527705')
+    driver.find_element_by_id('idSIButton9').click()
+    time.sleep(5)
+    driver.find_element_by_id('appRoot').click()
+    time.sleep(5)
+    driver.find_element_by_id("id__29-menu").send_keys('/Users/lijinyuan/Downloads/test')
+    time.sleep(5)
+# upload()
+
+def download():
+    driver.get('https://data.gov.tw/dataset/9337')
+    driver.find_element_by_xpath('//*[@id="node-9337"]/div[2]/div[2]/div[1]/div[4]/div[2]/div/div[1]/a').click()
+    time.sleep(10)
+# download()
+
+def scroll():
+    driver.get('https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=selenium&rsv_pq=c25c8ba60005e2e3&rsv_t=a44eQRRe2NHPTNSiNzb5EDy0wu9m5QvVGoavqYnrFVTOKzbP9WM8lxZslR0&rqlang=cn&rsv_enter=1&rsv_sug3=7')
+    driver.set_window_size(600, 600)
+    time.sleep(3)
+    js = 'window.scrollTo(100, 450);'
+    driver.execute_script(js)
+    time.sleep(10)
+scroll()
+
+time.sleep(5)
+driver.quit()
