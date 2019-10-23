@@ -28,19 +28,6 @@ driver = webdriver.Chrome(executable_path="/chromedriver")
     # driver.find_element_by_css_selector('[name="xxxxx"]') #屬性
     # driver.find_element_by_css_selector('form#form>span>input#kw') #組合定位
 
-def login():
-    driver.get('https://nccu.edu.tw/indexs.html')
-    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[2]/input').clear()
-    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[2]/input').send_keys('')
-    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[3]/input').clear()
-    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[3]/input').send_keys('')
-    driver.find_element_by_xpath('//*[@id="content"]/article/form/p[4]/input').click()
-    driver.implicitly_wait(5)
-    driver.switch_to.frame('m2k')
-    text = driver.find_element_by_xpath('//*[@id="smOLIF1"]/div/div[2]/nobr/div/nobr[5]/a').text
-    print(text)
-# login()
-
 def gettext_perform():
     driver.get('https://www.baidu.com/')
     text = driver.find_element_by_xpath('//*[@id="qrcode"]/div/div[2]/p[2]').text
@@ -72,22 +59,6 @@ def switch_window():
     text = driver.find_element_by_xpath('//*[@id="qrcode"]/div/div[2]/p[2]').text
     print(text)
 # switch_window()
-
-def upload():
-    driver.get('https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=13&ct=1563444867&rver=7.1.6819.0&wp=MBI_SSL_SHARED&wreply=https:%2F%2Fonedrive.live.com%2F%3Fid%3Droot%26cid%3D0BDE59C94E9497FB%26mkt%3Dzh-TW&lc=1028&id=250206&cbcxt=sky&mkt=zh-TW&lw=1&fl=easi2')
-    driver.find_element_by_xpath('//*[@id="i0116"]').clear()
-    driver.find_element_by_xpath('//*[@id="i0116"]').send_keys('')
-    driver.find_element_by_id('idSIButton9').click()
-    time.sleep(5)
-    driver.find_element_by_xpath('//*[@id="i0118"]').clear()
-    driver.find_element_by_xpath('//*[@id="i0118"]').send_keys('')
-    driver.find_element_by_id('idSIButton9').click()
-    time.sleep(5)
-    driver.find_element_by_id('appRoot').click()
-    time.sleep(5)
-    driver.find_element_by_id("id__29-menu").send_keys('')
-    time.sleep(5)
-# upload()
 
 def download():
     driver.get('https://data.gov.tw/dataset/9337')
