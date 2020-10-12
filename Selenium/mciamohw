@@ -1,0 +1,56 @@
+import time
+import requests
+import pandas as pd
+from bs4 import BeautifulSoup
+from selenium import webdriver
+t0 = time.time()
+
+driver = webdriver.Chrome(executable_path=r"D:\JetBrains\chromedriver")
+
+href_list = []
+def get_href(): #取出各頁面各列詳細資料中網址
+    driver.get('https://mcia.mohw.gov.tw/openinfo/A100/A101-1.aspx')
+    driver.find_element_by_xpath('//*[@id="ctl00_ContentPlaceHolder1_chbDCD_NAME_12"]').click()
+    driver.find_element_by_xpath('//*[@id="ctl00_ContentPlaceHolder1_btSEARCH"]').click()
+    driver.implicitly_wait(5)
+    page_fr = '//*[@id="ctl00_ContentPlaceHolder1_gviewMain"]/tbody/tr[22]/td/table/tbody/tr/td['
+    page_ba = ']/a'
+    row_fr = '//*[@id="ctl00_ContentPlaceHolder1_gviewMain_ctl'
+    row_ba = '_hlDownload"]'
+    for i in range(1, 12): #範圍2~12
+        if i > 1:
+            driver.find_element_by_xpath(page_fr + str(i) + page_ba).click()
+        for j in range(2, 22): #範圍3~22
+            try:
+                href_list.append(driver.find_element_by_xpath(row_fr + str('%02d' % j) + row_ba).get_attribute("href"))
+            except:
+                z = 0
+        time.sleep(1)
+get_href()
+driver.quit()
+print('資料筆數：', len(href_list))
+t1 = time.time()-t0
+print('花費時間：', t1)
+
+sum_list = [['機構名稱','機構地址','機構電話']]
+def get_data(): #取出詳細資料中資訊
+    for k in href_list:
+        dom = requests.get(k)
+        soup = BeautifulSoup(dom.text, 'html.parser')
+        tem_list = []
+        tem_list.append(soup.find(id="ctl00_ContentPlaceHolder1_lbBAS_NAME").get_text())
+        tem_list.append(soup.find(id="ctl00_ContentPlaceHolder1_lbZONE_ADDR").get_text())
+        tel = soup.find(id="ctl00_ContentPlaceHolder1_lbBAS_TEL_NO").get_text()
+        tel = tel.replace('(', '').replace(')', '-').replace(' ', '-').replace('--', '-').replace('--', '-')
+        if tel.find('-') == -1:
+            if tel.startswith('037') or tel.startswith('049') or tel.startswith('082') or tel.startswith('089'):
+                tel = tel[:3] + '-' + tel[3:]
+            elif tel.startswith('0'):
+                tel = tel[:2] + '-' + tel[2:]
+        tem_list.append(tel)
+        sum_list.append(tem_list)
+get_data()
+
+data = pd.DataFrame(sum_list)
+data.to_csv(r'C:\Users\user\Desktop\aa.csv', encoding='big5', header=False, index=True)
+print('花費時間：', time.time()-t1)
