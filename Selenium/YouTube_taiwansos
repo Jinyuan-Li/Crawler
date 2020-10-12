@@ -1,0 +1,33 @@
+import time
+import pandas as pd
+from selenium import webdriver
+t0 = time.time()
+
+driver = webdriver.Chrome(executable_path=r"D:\JetBrains\chromedriver")
+
+sum_list = [['title','href','hash','觀看次數','上傳時間']]
+def get_href(): #取出各頁面各列詳細資料中網址
+    driver.get('https://www.youtube.com/user/taiwansos/videos')
+
+    for i in range(9999):
+        # if i < 100:
+            try:
+                tem_list = []
+                driver.execute_script('window.scrollBy(0,100)')
+                tem_list.append(driver.find_element_by_xpath('/html/body/ytd-app/div/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-grid-renderer/div[1]/ytd-grid-video-renderer[' + str(i + 1) + ']/div[1]/div[1]/div[1]/h3/a').text)
+                aa = driver.find_element_by_xpath('/html/body/ytd-app/div/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-grid-renderer/div[1]/ytd-grid-video-renderer[' + str(i + 1) + ']/div[1]/div[1]/div[1]/h3/a').get_attribute('href')
+                tem_list.append(aa)
+                tem_list.append(aa.replace('https://www.youtube.com/watch?v=', ''))
+                tem_list.append(driver.find_element_by_xpath('/html/body/ytd-app/div/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-grid-renderer/div[1]/ytd-grid-video-renderer[' + str(i + 1) + ']/div[1]/div[1]/div[1]/div/div[1]/div[2]/span[1]').text.replace('觀看次數：', '').replace('次', ''))
+                tem_list.append(driver.find_element_by_xpath('/html/body/ytd-app/div/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-grid-renderer/div[1]/ytd-grid-video-renderer[' + str(i + 1) + ']/div[1]/div[1]/div[1]/div/div[1]/div[2]/span[2]').text)
+                sum_list.append(tem_list)
+            except:
+                break
+    driver.quit()
+    # print(sum_list)
+    df = pd.DataFrame(sum_list)
+    df.to_excel(r'C:\Users\user\Desktop\YouTube_videos.xlsx', sheet_name='videos', index=0, header=0)
+
+
+get_href()
+print('花費時間：',time.time()-t0)
