@@ -1,0 +1,60 @@
+import time
+import numpy as np
+import pandas as pd
+from selenium import webdriver
+t0 = time.time()
+
+driver = webdriver.Chrome(executable_path=r"\\Tspc-nas\中心資源\公-同仁暫存檔(請自行留檔)\◎晉源\chromedriver\84\chromedriver")
+sum_list = []
+
+exam_stat1, exam_stat2, exam_stat3 = list(range(94, 123)), list(range(128, 139)), list(range(148, 155))
+exam_stat = np.hstack((exam_stat1, exam_stat2, exam_stat3))
+
+driver.get('https://www.tsos.org.tw/exam/stat/94')
+driver.find_element_by_xpath('//*[@id="account"]/div/div[1]/input').send_keys("")
+driver.find_element_by_xpath('//*[@id="password"]/div/div[1]/input').send_keys("")
+driver.find_element_by_xpath('//*[@id="login_form"]/div[6]/div/button').click()
+driver.implicitly_wait(5)
+
+# for i in range(125, 126):
+for i in exam_stat:
+    tem_list = []
+    try:
+        driver.get('https://www.tsos.org.tw/exam/stat/' + str(i))
+        tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[1]/div/div[1]/div/a[3]').text)
+        for j in range(0, 11, 2):
+            tem_list.append(driver.find_element_by_xpath('//*[@id="t1_tr' + str(j) + '"]/td[2]').text)
+        driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[1]/div/div[3]/ul/li[3]/a').click()
+        driver.implicitly_wait(5)
+    except:
+        z = 0
+
+    for j in range(1, 6):
+        try:
+            tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/div[1]/div').text)
+            test = driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/div[2]/div[1]/div[2]/div').text
+            tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/div[2]/div[1]/div[2]/div').text)
+            tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/div[2]/div[2]').text.replace('答對率: ', ''))
+            for k in range(1, 6):
+                tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/ul/li[' + str(k) + ']/div/div[1]').text)
+                tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/ul/li[' + str(k) + ']/div/div[2]').text)
+        except:
+            try:
+                tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/div[2]/span[1]').text.replace('正解 : ', ''))
+                tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/div[2]/span[2]').text.replace('答對率 : ', ''))
+                for k in range(1, 4):
+                    tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/ul/li[' + str(k) + ']/div/div[1]').text)
+                    tem_list.append(driver.find_element_by_xpath('//*[@id="xbox-inline"]/div[2]/div/div[' + str(j) + ']/div[2]/ul/li[' + str(k) + ']/div/div[2]').text)
+                    if k == 2:
+                        for l in range(4):
+                            tem_list.append('--')
+            except:
+                z = 0
+
+    sum_list.append(tem_list)
+    print(i)
+
+driver.quit()
+df = pd.DataFrame(sum_list)
+df.to_excel(r'C:\Users\user\Desktop\elearning_exam.xlsx', sheet_name='elearning_exam', index=0, header=0)
+print('花費時間：',time.time()-t0)
